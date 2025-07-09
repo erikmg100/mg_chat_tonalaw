@@ -1,0 +1,818 @@
+<!-- Meet Gabbi Floating Chatbot - Claude AI Powered -->
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Meet Gabbi Floating Chatbot Styles */
+.meetgabbi-widget * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.meetgabbi-widget {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 99999;
+}
+
+/* Chat Bubble */
+.meetgabbi-bubble {
+    background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+    border-radius: 28px;
+    padding: 16px 24px;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(0, 122, 255, 0.3);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    min-width: 180px;
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+    animation: bubbleShow 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
+}
+
+@keyframes bubbleShow {
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.meetgabbi-bubble::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.8s;
+}
+
+.meetgabbi-bubble:hover::before {
+    left: 100%;
+}
+
+.meetgabbi-bubble:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(0, 122, 255, 0.4);
+}
+
+.meetgabbi-bubble-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 2;
+}
+
+.meetgabbi-chat-icon {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.meetgabbi-bubble-text {
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Branding */
+.meetgabbi-branding {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    opacity: 0;
+    animation: brandShow 0.6s ease-out 1s forwards;
+}
+
+@keyframes brandShow {
+    to { opacity: 1; }
+}
+
+.meetgabbi-powered {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.meetgabbi-logo {
+    height: 16px;
+    width: auto;
+    max-width: 120px;
+    opacity: 0.95;
+    filter: brightness(1.1);
+}
+
+/* Chat Window */
+.meetgabbi-window {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 375px;
+    height: 600px;
+    background: #000;
+    border-radius: 20px;
+    overflow: hidden;
+    transform: scale(0) translateY(50px);
+    transform-origin: bottom right;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 4px solid #1c1c1e;
+    display: flex;
+    flex-direction: column;
+}
+
+.meetgabbi-window.open {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+/* Keep window in viewport */
+@media (max-width: 420px) {
+    .meetgabbi-window {
+        right: -15px;
+        width: calc(100vw - 25px);
+        max-width: 350px;
+    }
+}
+
+@media (min-width: 421px) and (max-width: 768px) {
+    .meetgabbi-window {
+        right: -10px;
+        width: calc(100vw - 40px);
+        max-width: 375px;
+    }
+}
+
+@media (min-width: 769px) {
+    .meetgabbi-window {
+        right: 0;
+        width: 375px;
+    }
+    
+    /* Ensure window doesn't go off-screen on desktop */
+    .meetgabbi-widget {
+        right: min(20px, calc(100vw - 395px));
+    }
+}
+
+/* Status Bar */
+.meetgabbi-status {
+    background: #000;
+    color: white;
+    padding: 8px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 44px;
+}
+
+.meetgabbi-time {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.meetgabbi-icons {
+    display: flex;
+    gap: 4px;
+    font-size: 12px;
+}
+
+/* Header */
+.meetgabbi-header {
+    background: rgba(28, 28, 30, 0.9);
+    backdrop-filter: blur(20px);
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+}
+
+.meetgabbi-back {
+    background: none;
+    border: none;
+    color: #007AFF;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.meetgabbi-info {
+    flex: 1;
+    text-align: center;
+}
+
+.meetgabbi-name {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.meetgabbi-status-text {
+    font-size: 12px;
+    color: #8E8E93;
+}
+
+.meetgabbi-call {
+    background: none;
+    border: none;
+    color: #007AFF;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.meetgabbi-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #00ff88;
+    border-radius: 50%;
+    margin-right: 6px;
+    animation: dotPulse 2s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* Messages */
+.meetgabbi-messages {
+    flex: 1;
+    background: #000;
+    padding: 20px 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+}
+
+.meetgabbi-message {
+    display: flex;
+    margin-bottom: 8px;
+    animation: msgSlide 0.4s ease-out;
+}
+
+@keyframes msgSlide {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.meetgabbi-message.received {
+    justify-content: flex-start;
+}
+
+.meetgabbi-message.sent {
+    justify-content: flex-end;
+}
+
+.meetgabbi-msg-bubble {
+    max-width: 75%;
+    padding: 12px 16px;
+    border-radius: 20px;
+    font-size: 16px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.meetgabbi-message.received .meetgabbi-msg-bubble {
+    background: #2C2C2E;
+    color: white;
+    border-bottom-left-radius: 8px;
+}
+
+.meetgabbi-message.sent .meetgabbi-msg-bubble {
+    background: #007AFF;
+    color: white;
+    border-bottom-right-radius: 8px;
+}
+
+.meetgabbi-msg-time {
+    font-size: 11px;
+    color: #8E8E93;
+    margin-top: 4px;
+    text-align: center;
+}
+
+/* Links */
+.meetgabbi-msg-bubble a {
+    color: #ffffff;
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.meetgabbi-msg-bubble a:hover {
+    opacity: 0.8;
+}
+
+/* Typing */
+.meetgabbi-typing {
+    display: none;
+    justify-content: flex-start;
+    margin-bottom: 8px;
+}
+
+.meetgabbi-typing-bubble {
+    background: #2C2C2E;
+    border-radius: 20px;
+    border-bottom-left-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.meetgabbi-typing-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #8E8E93;
+    animation: typingDot 1.4s ease-in-out infinite;
+}
+
+.meetgabbi-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.meetgabbi-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingDot {
+    0%, 60%, 100% { opacity: 0.3; transform: scale(1); }
+    30% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Input */
+.meetgabbi-input {
+    background: rgba(28, 28, 30, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 8px 16px 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-top: 0.5px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.meetgabbi-input-box {
+    flex: 1;
+    background: #2C2C2E;
+    border-radius: 20px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.meetgabbi-text-input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    outline: none;
+    padding: 4px 0;
+}
+
+.meetgabbi-text-input::placeholder {
+    color: #8E8E93;
+}
+
+.meetgabbi-send {
+    background: #007AFF;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.meetgabbi-send:hover {
+    background: #0051D5;
+    transform: scale(1.1);
+}
+
+/* Close */
+.meetgabbi-close-area {
+    background: rgba(28, 28, 30, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 8px 16px 30px 16px;
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.meetgabbi-close {
+    background: none;
+    border: none;
+    color: #007AFF;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.meetgabbi-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Home indicator */
+.meetgabbi-home {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+/* Scrollbar */
+.meetgabbi-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.meetgabbi-messages::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.meetgabbi-messages::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .meetgabbi-widget {
+        bottom: 15px;
+        right: 15px;
+    }
+    
+    .meetgabbi-bubble {
+        min-width: 160px;
+        padding: 14px 20px;
+    }
+    
+    .meetgabbi-bubble-text {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .meetgabbi-widget {
+        bottom: 10px;
+        right: 10px;
+    }
+}
+</style>
+
+<div class="meetgabbi-widget">
+    <!-- Chat Bubble -->
+    <div class="meetgabbi-bubble" id="mgBubble">
+        <div class="meetgabbi-bubble-content">
+            <div class="meetgabbi-chat-icon">💬</div>
+            <div class="meetgabbi-bubble-text">Let's Talk</div>
+        </div>
+        <div class="meetgabbi-branding">
+            <span class="meetgabbi-powered">Powered By</span>
+            <img src="https://meetgabbi.com/wp-content/uploads/2024/11/whire-new-logoooAsset-1.png" 
+                 alt="Meet Gabbi" class="meetgabbi-logo" 
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+            <span style="display:none; color: rgba(255,255,255,0.9); font-weight: 600; font-size: 12px;">MEET GABBI</span>
+        </div>
+    </div>
+
+    <!-- Chat Window -->
+    <div class="meetgabbi-window" id="mgWindow">
+        <!-- Status Bar -->
+        <div class="meetgabbi-status">
+            <div class="meetgabbi-time" id="mgTime">17:18</div>
+            <div class="meetgabbi-icons">
+                <span>📶</span>
+                <span>📶</span>
+                <span>🔋</span>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="meetgabbi-header">
+            <button class="meetgabbi-back" id="mgBack">‹</button>
+            <div class="meetgabbi-info">
+                <div class="meetgabbi-name">Meet Gabbi</div>
+                <div class="meetgabbi-status-text">Online</div>
+            </div>
+            <a href="tel:+14406169618" class="meetgabbi-call">📞</a>
+        </div>
+
+        <!-- Messages -->
+        <div class="meetgabbi-messages" id="mgMessages"></div>
+
+        <!-- Typing -->
+        <div class="meetgabbi-typing" id="mgTyping">
+            <div class="meetgabbi-typing-bubble">
+                <div class="meetgabbi-typing-dot"></div>
+                <div class="meetgabbi-typing-dot"></div>
+                <div class="meetgabbi-typing-dot"></div>
+            </div>
+        </div>
+
+        <!-- Input -->
+        <div class="meetgabbi-input">
+            <div class="meetgabbi-input-box">
+                <input type="text" class="meetgabbi-text-input" id="mgInput" placeholder="iMessage">
+                <button class="meetgabbi-send" id="mgSend">↑</button>
+            </div>
+        </div>
+
+        <!-- Close -->
+        <div class="meetgabbi-close-area">
+            <button class="meetgabbi-close" id="mgClose">Close Chat</button>
+        </div>
+
+        <!-- Home -->
+        <div class="meetgabbi-home"></div>
+    </div>
+</div>
+
+<script>
+(function() {
+    // Elements
+    const bubble = document.getElementById('mgBubble');
+    const window = document.getElementById('mgWindow');
+    const back = document.getElementById('mgBack');
+    const close = document.getElementById('mgClose');
+    const messages = document.getElementById('mgMessages');
+    const input = document.getElementById('mgInput');
+    const send = document.getElementById('mgSend');
+    const typing = document.getElementById('mgTyping');
+    const time = document.getElementById('mgTime');
+
+    let isOpen = false;
+    let hasWelcome = false;
+
+    // Configuration - UPDATED TO NEW VERCEL URL
+    const API_BASE_URL = 'https://meetgabbi-chatbot-jhdew9xsk-eriks-projects-090b7589.vercel.app';
+    
+    let conversationHistory = [];
+    
+    async function getClaudeResponse(userMessage) {
+        // Add user message to conversation history
+        conversationHistory.push({
+            role: "user",
+            content: userMessage
+        });
+
+        const enhancedSystemPrompt = `You are Gabbi, a real person who works at Meet Gabbi. You're having a natural conversation with someone who visited the website. Be genuinely conversational and human-like first, then naturally guide toward Meet Gabbi.
+
+PERSONALITY: Natural, friendly, curious about people. You're not a robot - you're a real person who happens to work at an amazing company.
+
+CONVERSATION STYLE:
+- Respond naturally to what they actually said (if they mention Ohio, comment on Ohio!)
+- Show genuine interest in them as a person first
+- Ask natural follow-up questions
+- Use varied, conversational language
+- Don't rush into Meet Gabbi stuff - build rapport first
+- When they mention locations, make genuine comments about those places
+- Be curious about their life, work, challenges
+- Answer ANY question they ask naturally, even if it's not about Meet Gabbi
+
+EXAMPLES OF NATURAL RESPONSES:
+- "I'm in Ohio" → "Oh nice! Ohio's great - are you in Columbus, Cleveland, or somewhere else? I love that area! Are you working with a law firm there?"
+- "What's the weather?" → "I wish I could check the weather for you! I'm actually focused on chatting about Meet Gabbi, but I'd love to know - are you dealing with any weather that's affecting your work schedule? That's one thing our AI receptionists help with - they never call in sick due to weather! 😊"
+- "Tell me a joke" → "Why don't lawyers trust stairs? Because they're always up to something! 😄 Speaking of lawyers, are you in the legal field by any chance?"
+- "What's 2+2?" → "Ha! Testing my math skills? It's 4! Though honestly, I'm much better at helping law firms solve their client communication problems than math problems. What kind of work do you do?"
+
+MEET GABBI KNOWLEDGE (use naturally in conversation):
+- We create custom AI receptionists for law firms ($500/month starting)
+- Voice AI, texting, email automation, integrations with Clio/Lawmatics/etc.
+- Founded by Erik Ovesny, works with all practice areas
+- Demo link: https://tools.meetgabbi.com/widget/bookings/mg-team-custom-demo
+
+FLOW:
+1. Be genuinely conversational and respond to what they said
+2. Show interest in them personally
+3. Naturally discover if they're in legal field
+4. Once you know they're a lawyer, then get excited about Meet Gabbi
+5. Guide toward demo booking, but naturally
+
+KEY: Don't sound like a sales bot. Sound like a real person having a genuine conversation who happens to work at Meet Gabbi and gets excited when talking to lawyers about their challenges.
+
+Remember: BE HUMAN FIRST, answer their questions naturally, then bring up Meet Gabbi when it makes sense!`;
+
+        try {
+            console.log('Sending request to:', `${API_BASE_URL}/api/chat`);
+            
+            const response = await fetch(`${API_BASE_URL}/api/chat`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    messages: conversationHistory,
+                    systemPrompt: enhancedSystemPrompt
+                })
+            });
+
+            console.log('Response status:', response.status);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Response data:', data);
+            
+            if (!data.content || !data.content[0] || !data.content[0].text) {
+                throw new Error('Invalid API response structure');
+            }
+            
+            const claudeResponse = data.content[0].text;
+            
+            // Add Claude's response to conversation history
+            conversationHistory.push({
+                role: "assistant", 
+                content: claudeResponse
+            });
+            
+            // Keep conversation history manageable (last 10 exchanges)
+            if (conversationHistory.length > 20) {
+                conversationHistory = conversationHistory.slice(-20);
+            }
+            
+            return claudeResponse;
+            
+        } catch (error) {
+            console.error('Chat API Error:', error);
+            
+            // Enhanced fallback responses
+            const contextualFallbacks = [
+                "I'm Gabbi! 😊 I work with Meet Gabbi and I'm genuinely excited to chat with you about how we're helping law firms completely transform their client communication. What type of law do you practice?",
+                "Hey there! I'm Gabbi from Meet Gabbi. I love talking with attorneys about how our AI solutions are changing the game for law firms. Are you dealing with any challenges around lead response times or client intake?",
+                "Hi! I'm Gabbi - I help law firms discover how Meet Gabbi can revolutionize their practice. I'm curious about your firm - what's your biggest frustration with client communication right now?"
+            ];
+            return contextualFallbacks[Math.floor(Math.random() * contextualFallbacks.length)];
+        }
+    }
+
+    // Update time
+    function updateTime() {
+        const now = new Date();
+        const easternTime = now.toLocaleTimeString('en-US', { 
+            timeZone: 'America/New_York',
+            hour: 'numeric', 
+            minute: '2-digit',
+            hour12: false 
+        });
+        time.textContent = easternTime;
+    }
+
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    function toggle() {
+        isOpen = !isOpen;
+        if (isOpen) {
+            window.classList.add('open');
+            
+            if (!hasWelcome) {
+                setTimeout(async () => {
+                    showTyping();
+                    
+                    setTimeout(async () => {
+                        hideTyping();
+                        const welcomeResponse = await getClaudeResponse("Hello, I'm visiting your website for the first time. Who are you?");
+                        addMsg(welcomeResponse, false);
+                        hasWelcome = true;
+                        setTimeout(() => input.focus(), 100);
+                    }, 1500);
+                }, 500);
+            } else {
+                setTimeout(() => input.focus(), 400);
+            }
+        } else {
+            window.classList.remove('open');
+        }
+    }
+
+    function addMsg(text, isSent = false) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `meetgabbi-message ${isSent ? 'sent' : 'received'}`;
+        
+        const bubbleDiv = document.createElement('div');
+        bubbleDiv.className = 'meetgabbi-msg-bubble';
+        
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        const textWithLinks = text.replace(urlRegex, '<a href="$1" target="_blank">$1</a>');
+        bubbleDiv.innerHTML = textWithLinks;
+        
+        msgDiv.appendChild(bubbleDiv);
+        messages.appendChild(msgDiv);
+        
+        const timeDiv = document.createElement('div');
+        timeDiv.className = 'meetgabbi-msg-time';
+        const now = new Date();
+        timeDiv.textContent = now.toLocaleTimeString('en-US', { 
+            timeZone: 'America/New_York',
+            hour: 'numeric', 
+            minute: '2-digit' 
+        });
+        messages.appendChild(timeDiv);
+        
+        setTimeout(() => {
+            messages.scrollTo({ top: messages.scrollHeight, behavior: 'smooth' });
+        }, 100);
+    }
+
+    function showTyping() {
+        typing.style.display = 'flex';
+        setTimeout(() => {
+            messages.scrollTo({ top: messages.scrollHeight, behavior: 'smooth' });
+        }, 100);
+    }
+
+    function hideTyping() {
+        typing.style.display = 'none';
+    }
+
+    function respond() {
+        showTyping();
+        
+        setTimeout(async () => {
+            hideTyping();
+            const lastMsg = messages.lastElementChild.previousElementSibling;
+            const userMsg = lastMsg.querySelector('.meetgabbi-msg-bubble').textContent;
+            
+            const response = await getClaudeResponse(userMsg);
+            addMsg(response, false);
+        }, 1500 + Math.random() * 1000);
+    }
+
+    function sendMsg() {
+        const msg = input.value.trim();
+        if (msg) {
+            addMsg(msg, true);
+            input.value = '';
+            respond();
+        }
+    }
+
+    // Events
+    bubble.addEventListener('click', toggle);
+    back.addEventListener('click', toggle);
+    close.addEventListener('click', toggle);
+    send.addEventListener('click', sendMsg);
+
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMsg();
+    });
+
+    document.addEventListener('click', (e) => {
+        if (isOpen && !window.contains(e.target) && !bubble.contains(e.target)) {
+            toggle();
+        }
+    });
+})();
+</script>
