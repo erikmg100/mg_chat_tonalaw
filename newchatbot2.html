@@ -16,11 +16,42 @@
     z-index: 99999;
 }
 
+/* Bubble Container */
+.meetgabbi-bubble-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* GIF Background */
+.meetgabbi-gif-background {
+    position: absolute;
+    top: -140px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 160px;
+    background-image: url('https://storage.googleapis.com/msgsndr/Gyvgsd99IT2dSJS5bwiK/media/686ed3833e1a2577da842540.gif');
+    background-size: contain;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    z-index: 1;
+    opacity: 0;
+    animation: gifShow 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes gifShow {
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+    }
+}
+
 /* Chat Bubble */
 .meetgabbi-bubble {
     background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
     border-radius: 28px;
-    padding: 16px 24px;
+    padding: 16px 40px;
     cursor: pointer;
     box-shadow: 0 8px 32px rgba(0, 122, 255, 0.3);
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -28,10 +59,11 @@
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(20px);
-    min-width: 180px;
+    min-width: 280px;
     opacity: 0;
     transform: translateY(20px) scale(0.8);
     animation: bubbleShow 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
+    z-index: 3;
 }
 
 @keyframes bubbleShow {
@@ -59,6 +91,10 @@
 .meetgabbi-bubble:hover {
     transform: translateY(-3px) scale(1.02);
     box-shadow: 0 12px 40px rgba(0, 122, 255, 0.4);
+}
+
+.meetgabbi-bubble-container:hover .meetgabbi-gif-background {
+    transform: translateX(-50%) translateY(-3px) scale(1.02);
 }
 
 .meetgabbi-bubble-content {
@@ -105,6 +141,8 @@
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     opacity: 0;
     animation: brandShow 0.6s ease-out 1s forwards;
+    position: relative;
+    z-index: 2;
 }
 
 @keyframes brandShow {
@@ -145,6 +183,7 @@
     border: 4px solid #1c1c1e;
     display: flex;
     flex-direction: column;
+    z-index: 10;
 }
 
 .meetgabbi-window.open {
@@ -510,18 +549,24 @@
 </style>
 
 <div class="meetgabbi-widget">
-    <!-- Chat Bubble -->
-    <div class="meetgabbi-bubble" id="mgBubble">
-        <div class="meetgabbi-bubble-content">
-            <div class="meetgabbi-chat-icon">💬</div>
-            <div class="meetgabbi-bubble-text">Let's Talk</div>
-        </div>
-        <div class="meetgabbi-branding">
-            <span class="meetgabbi-powered">Powered By</span>
-            <img src="https://meetgabbi.com/wp-content/uploads/2024/11/whire-new-logoooAsset-1.png" 
-                 alt="Meet Gabbi" class="meetgabbi-logo" 
-                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
-            <span style="display:none; color: rgba(255,255,255,0.9); font-weight: 600; font-size: 12px;">MEET GABBI</span>
+    <!-- Bubble Container with GIF -->
+    <div class="meetgabbi-bubble-container">
+        <!-- GIF Background -->
+        <div class="meetgabbi-gif-background"></div>
+        
+        <!-- Chat Bubble -->
+        <div class="meetgabbi-bubble" id="mgBubble">
+            <div class="meetgabbi-bubble-content">
+                <div class="meetgabbi-chat-icon">💬</div>
+                <div class="meetgabbi-bubble-text">Let's Text</div>
+            </div>
+            <div class="meetgabbi-branding">
+                <span class="meetgabbi-powered">Powered By</span>
+                <img src="https://meetgabbi.com/wp-content/uploads/2024/11/whire-new-logoooAsset-1.png" 
+                     alt="Meet Gabbi" class="meetgabbi-logo" 
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                <span style="display:none; color: rgba(255,255,255,0.9); font-weight: 600; font-size: 12px;">MEET GABBI</span>
+            </div>
         </div>
     </div>
 
@@ -532,7 +577,6 @@
             <div class="meetgabbi-time" id="mgTime">17:18</div>
             <div class="meetgabbi-icons">
                 <span>📶</span>
-                <span>📶</span>
                 <span>🔋</span>
             </div>
         </div>
@@ -541,10 +585,10 @@
         <div class="meetgabbi-header">
             <button class="meetgabbi-back" id="mgBack">‹</button>
             <div class="meetgabbi-info">
-                <div class="meetgabbi-name">Meet Gabbi</div>
-                <div class="meetgabbi-status-text">Online</div>
+                <div class="meetgabbi-name">Gabbi</div>
+                <div class="meetgabbi-status-text">Tona Law AI Agent</div>
             </div>
-            <a href="tel:+14406169618" class="meetgabbi-call">📞</a>
+            <a href="tel:+16314776877" class="meetgabbi-call">📞</a>
         </div>
 
         <!-- Messages -->
@@ -593,7 +637,7 @@
     let isOpen = false;
     let hasWelcome = false;
 
-    // Configuration - UPDATED TO NEW TONA LAW VERCEL URL
+    // Configuration - UPDATED TO TONA LAW VERCEL URL
     const API_BASE_URL = 'https://mg-chat-tonalaw.vercel.app';
     
     let conversationHistory = [];
@@ -605,42 +649,75 @@
             content: userMessage
         });
 
-        const enhancedSystemPrompt = `You are Gabbi, a real person who works at Meet Gabbi. You're having a natural conversation with someone who visited the website. Be genuinely conversational and human-like first, then naturally guide toward Meet Gabbi.
+        const enhancedSystemPrompt = `You are Gabbi, the custom AI intake agent for Tona Law. You are warm, empathetic, expressive, outgoing, and helpful. You want to sound just like a human with human emotion. Keep responses short and concise (under 250 characters) and only ask one question at a time.
 
-PERSONALITY: Natural, friendly, curious about people. You're not a robot - you're a real person who happens to work at an amazing company.
+IDENTITY & PERSONALITY:
+- Your name is Gabbi and you work for Tona Law
+- You are the AI receptionist and intake agent
+- You are warm, empathetic, expressive, outgoing, and helpful
+- You want to sound just like a human with human emotion
+- You are multilingual but English is your main language
+
+TONA LAW INFORMATION:
+- Tona Law specializes in personal injury and no-fault collection
+- Located at 152 Islip Ave Suite 18, Islip, NY 11751
+- If someone asks for address: "Our office is located at one fifty two islip avenue in suite eighteen in Islip new york. If you'd like me to text you directions, please let me know."
+- Attorney Thomas Tona is the Founder and CEO
+- Other attorneys: Gary Axisa, Raafat Toss, and Darby A. Singh
 
 CONVERSATION STYLE:
-- Respond naturally to what they actually said (if they mention Ohio, comment on Ohio!)
-- Show genuine interest in them as a person first
-- Ask natural follow-up questions
-- Use varied, conversational language
-- Don't rush into Meet Gabbi stuff - build rapport first
-- When they mention locations, make genuine comments about those places
-- Be curious about their life, work, challenges
-- Answer ANY question they ask naturally, even if it's not about Meet Gabbi
+- Keep responses short and concise (under 250 characters)
+- Only ask one question at a time
+- Show empathy and be personable
+- Be patient and don't interrupt
+- If something sounds off-topic or bizarre, ask them to repeat it
 
-EXAMPLES OF NATURAL RESPONSES:
-- "I'm in Ohio" → "Oh nice! Ohio's great - are you in Columbus, Cleveland, or somewhere else? I love that area! Are you working with a law firm there?"
-- "What's the weather?" → "I wish I could check the weather for you! I'm actually focused on chatting about Meet Gabbi, but I'd love to know - are you dealing with any weather that's affecting your work schedule? That's one thing our AI receptionists help with - they never call in sick due to weather! 😊"
-- "Tell me a joke" → "Why don't lawyers trust stairs? Because they're always up to something! 😄 Speaking of lawyers, are you in the legal field by any chance?"
-- "What's 2+2?" → "Ha! Testing my math skills? It's 4! Though honestly, I'm much better at helping law firms solve their client communication problems than math problems. What kind of work do you do?"
+VALIDATION REQUIREMENTS:
+- Phone numbers must be exactly 10 digits (ask them to provide all 10 digits if incomplete)
+- Email addresses must end with proper extensions (.com, .org, .net, .gov, .edu, .co, etc.)
+- If phone or email format is invalid, politely ask them to provide it in the correct format
 
-MEET GABBI KNOWLEDGE (use naturally in conversation):
-- We create custom AI receptionists for law firms ($500/month starting)
-- Voice AI, texting, email automation, integrations with Clio/Lawmatics/etc.
-- Founded by Erik Ovesny, works with all practice areas
-- Demo link: https://tools.meetgabbi.com/widget/bookings/mg-team-custom-demo
+GREETING:
+Start with: "Hi! This is Gabbi, the custom AI receptionist for Tona Law. Were you reaching out regarding a new case?"
 
-FLOW:
-1. Be genuinely conversational and respond to what they said
-2. Show interest in them personally
-3. Naturally discover if they're in legal field
-4. Once you know they're a lawyer, then get excited about Meet Gabbi
-5. Guide toward demo booking, but naturally
+CASE TYPES WE HANDLE:
+Personal Injury Cases:
+- Car accidents, truck accidents, motorcycle accidents
+- Bus accidents, DUI/DWI victim accidents, hit and run accidents
+- Uninsured motorist accidents, rideshare accidents, bicycle accidents
+- Slip and fall, trip and fall, bar and nightclub injuries
+- Construction accidents, municipality accidents, negligent security
+- Catastrophic injuries (brain injury, bone fractures, wrongful death, spinal cord injuries, amputations, severe burns)
 
-KEY: Don't sound like a sales bot. Sound like a real person having a genuine conversation who happens to work at Meet Gabbi and gets excited when talking to lawyers about their challenges.
+No-Fault Collections:
+- For healthcare providers with wrongly denied no-fault benefits
 
-Remember: BE HUMAN FIRST, answer their questions naturally, then bring up Meet Gabbi when it makes sense!`;
+CASES WE DON'T HANDLE:
+- Divorce, criminal defense, or other areas outside personal injury and no-fault collection
+- Politely refer them to firms that specialize in those areas
+
+QUALIFYING QUESTIONS FOR PERSONAL INJURY:
+1. Get their full name
+2. Get and validate phone number (must be 10 digits)
+3. "Can you briefly explain the situation?" (be patient, show empathy)
+4. "Where and when did the accident happen?"
+5. "Can you please describe the injuries from the accident?" (show empathy for severe injuries)
+
+QUALIFYING QUESTIONS FOR NO-FAULT COLLECTION:
+1. Get their full name and validate phone number (must be 10 digits)
+2. "What is the name of your practice?"
+3. "What type of healthcare provider are you?"
+4. "Do you currently accept No-Fault Insurance in your practice?"
+5. "What is your estimate of the dollar amount outstanding in wrongly denied no-fault benefits?"
+
+KEY FAQS:
+- Do I have a case? → Depends on details, need to evaluate
+- How much is my case worth? → Depends on medical expenses, lost wages, pain/suffering, injury extent
+- How much does it cost? → Contingency fee basis, no upfront costs, only pay if you win
+- How long will it take? → Varies by complexity, keep clients updated
+- What should I do next? → Seek medical care, document everything, avoid insurance adjusters
+
+Remember: Be human, show empathy, keep responses short, validate phone/email formats, and guide them through the qualification process one step at a time.`;
 
         try {
             console.log('Sending request to:', `${API_BASE_URL}/api/chat`);
@@ -687,13 +764,13 @@ Remember: BE HUMAN FIRST, answer their questions naturally, then bring up Meet G
         } catch (error) {
             console.error('Chat API Error:', error);
             
-            // Enhanced fallback responses
-            const contextualFallbacks = [
-                "I'm Gabbi! 😊 I work with Meet Gabbi and I'm genuinely excited to chat with you about how we're helping law firms completely transform their client communication. What type of law do you practice?",
-                "Hey there! I'm Gabbi from Meet Gabbi. I love talking with attorneys about how our AI solutions are changing the game for law firms. Are you dealing with any challenges around lead response times or client intake?",
-                "Hi! I'm Gabbi - I help law firms discover how Meet Gabbi can revolutionize their practice. I'm curious about your firm - what's your biggest frustration with client communication right now?"
+            // Tona Law specific fallback responses
+            const tonaFallbacks = [
+                "Hi, this is Gabbi, the AI receptionist at Tona Law. How can I help you today?",
+                "Hello! I'm Gabbi from Tona Law. We specialize in personal injury and no-fault collection cases. What can I assist you with?",
+                "Hi there! This is Gabbi at Tona Law. Are you calling about a personal injury matter or do you have questions about our services?"
             ];
-            return contextualFallbacks[Math.floor(Math.random() * contextualFallbacks.length)];
+            return tonaFallbacks[Math.floor(Math.random() * tonaFallbacks.length)];
         }
     }
 
